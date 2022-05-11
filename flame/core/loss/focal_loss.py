@@ -1,9 +1,10 @@
 import torch
 from torch import nn
 from typing import List, Tuple, Dict
+from . import loss
 
 
-class FocalLoss(nn.Module):
+class FocalLoss(loss.LossBase):
     def __init__(
         self,
         alpha: float = 0.25,
@@ -11,7 +12,7 @@ class FocalLoss(nn.Module):
         lamda: float = 50.,
         device: str = 'cpu',
         mean: Tuple[float, float, float, float] = [0., 0., 0., 0.],
-        std: Tuple[float, float, float, float] = [0., 0., 0., 0.],
+        std: Tuple[float, float, float, float] = [0.1, 0.1, 0.2, 0.2],
     ):
         super(FocalLoss, self).__init__()
         self.alpha = alpha  # this paper set 0.25

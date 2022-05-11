@@ -207,7 +207,8 @@ class Model(nn.Module):
         self.retina_net.load_state_dict(state_dict)
 
     def forward(self, inputs):
-        if self.training:
-            return self.retina_net(inputs)
-        else:
-            return self.retina_net.predict(inputs)
+        return self.retina_net(inputs)
+            
+
+    def predict(self, inputs):
+        return self.retina_net.predict(inputs)
