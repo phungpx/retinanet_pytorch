@@ -96,13 +96,7 @@ class FocalLoss(nn.Module):
 
         return reg_target
 
-    def _smooth_l1_loss(
-        self,
-        input: torch.Tensor = None,
-        target: torch.Tensor = None,
-        reduction: str = 'none',
-        beta: float = 1.
-    ) -> torch.Tensor:
+    def _smooth_l1_loss(self, input: torch.Tensor, target: torch.Tensor, reduction: str = 'none', beta: float = 1.) -> torch.Tensor:
         '''smooth l1 for calculating regression loss,
             reference: https://pytorch.org/docs/stable/generated/torch.nn.SmoothL1Loss.html
         '''
@@ -119,12 +113,7 @@ class FocalLoss(nn.Module):
             raise NotImplementedError(f'invalid reduction mode: {reduction}')
         return loss
 
-    def _focal_loss(
-        self,
-        cls_pred: torch.Tensor = None,
-        cls_target: torch.Tensor = None,
-        reduction: str = 'none'
-    ) -> torch.Tensor:
+    def _focal_loss(self, cls_pred: torch.Tensor, cls_target: torch.Tensor, reduction: str = 'none') -> torch.Tensor:
         assert cls_pred.shape == cls_target.shape, f'expected target batch {cls_target.shape} to match target batch {cls_pred.shape}'
         positive_classes_loss = - self.alpha * (1. - cls_pred).pow(self.gamma) * torch.log(cls_pred)
         positive_classes_loss = cls_target * positive_classes_loss  # FL(pos_cls) = - alpha * [(1 - pred) ** gamma] * log(pred)
@@ -217,11 +206,17 @@ class FocalLoss(nn.Module):
             else:
                 reg_losses.append(torch.tensor(0).float().to(self.device))
 
-        cls_loss = torch.stack(cls_losses).mean(dim=0, keepdim=True)
-        reg_loss = torch.stack(reg_losses).mean(dim=0, keepdim=True)
+        cls_loss = torch.stack(cls_losses).mean()
+        reg_loss = torch.stack(reg_losses).mean()
 
         return cls_loss, reg_loss
 
-    def forward(self, cls_preds, reg_preds, anchors, targets):
+    def forward(
+        self,
+        cls_preds: torch.Tensor,
+        reg_preds: torch.Tensor,
+        anchors: torch.Tensor,
+        targets: List[Dict[str, torch.Tensor]]
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         cls_loss, reg_loss = self.loss_fn(cls_preds, reg_preds, anchors, targets)
         return cls_loss, self.lamda * reg_loss
