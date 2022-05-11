@@ -1,3 +1,4 @@
+import math
 import torch
 from torch import nn
 from torchvision.ops.boxes import batched_nms
@@ -41,7 +42,7 @@ class RetinaNet(nn.Module):
 
         # backbone
         self.backbone, backbone_out_channels = load_backbone(
-            backbone=backbone_name, pretrained=backbone_pretrained
+            backbone_name=backbone_name, pretrained=backbone_pretrained
         )
 
         # neck
@@ -80,10 +81,10 @@ class RetinaNet(nn.Module):
                 module.bias.data.zero_()
 
         prior = 0.01
-        self.classifier.output.weight.data.fill_(0)
-        self.classifier.output.bias.data.fill_(-math.log((1.0 - prior) / prior))
-        self.regressor.output.weight.data.fill_(0)
-        self.regressor.output.bias.data.fill_(0)
+        self.classifier.head_conv[0].weight.data.fill_(0)
+        self.classifier.head_conv[0].bias.data.fill_(-math.log((1.0 - prior) / prior))
+        self.regressor.head_conv.weight.data.fill_(0)
+        self.regressor.head_conv.bias.data.fill_(0)
 
         self.freeze_batchnorm
 
@@ -99,7 +100,7 @@ class RetinaNet(nn.Module):
         reg_preds = self.regressor(pyramid_features=pyramid_features)
         cls_preds = self.classifier(pyramid_features=pyramid_features)
 
-        anchors = self.anchors(inputs, pyramid_features)
+        anchors = self.anchor_generator(inputs, pyramid_features)
 
         return cls_preds, reg_preds, anchors
 
@@ -109,7 +110,7 @@ class RetinaNet(nn.Module):
         reg_preds = self.regressor(pyramid_features)  # B x all_anchors x 4
         cls_preds = self.classifier(pyramid_features)  # B x all_anchors x num_classes
 
-        anchors = self.anchors(inputs, pyramid_features)  # 1 x all_anchors x 4
+        anchors = self.anchor_generator(inputs, pyramid_features)  # 1 x all_anchors x 4
 
         # get predicted boxes which are decoded from reg_preds and anchors
         batch_boxes = self.box_decoder(anchors=anchors, regression=reg_preds)  # B x all_anchors x 4, decoded boxes
@@ -180,7 +181,7 @@ class Model(nn.Module):
         score_threshold: float = 0.2,
     ) -> None:
         super(Model, self).__init__()
-        self.model = RetinaNet(
+        self.retina_net = RetinaNet(
             num_classes=num_classes,
             backbone_name=backbone_name,
             backbone_pretrained=backbone_pretrained,
@@ -193,20 +194,20 @@ class Model(nn.Module):
 
         if pretrained_weight is not None:
             state_dict = torch.load(pretrained_weight, map_location='cpu')
-            state_dict.pop('classifier.header.pointwise_conv.conv.weight')
-            state_dict.pop('classifier.header.pointwise_conv.conv.bias')
-            state_dict.pop('regressor.header.pointwise_conv.conv.weight')
-            state_dict.pop('regressor.header.pointwise_conv.conv.bias')
-            self.model.load_state_dict(state_dict, strict=False)
+            state_dict.pop('classifier.head_conv[0].weight')
+            state_dict.pop('classifier.head_conv[0].bias')
+            state_dict.pop('regressor.head_conv.weight')
+            state_dict.pop('regressor.head_conv.bias')
+            self.retina_net.load_state_dict(state_dict, strict=False)
 
     def state_dict(self):
-        return self.model.state_dict()
+        return self.retina_net.state_dict()
 
     def load_state_dict(self, state_dict):
-        self.model.load_state_dict(state_dict)
+        self.retina_net.load_state_dict(state_dict)
 
     def forward(self, inputs):
-        return self.model(inputs)
-
-    def predict(self, inputs):
-        return self.model.predict(inputs)
+        if self.training:
+            return self.retina_net(inputs)
+        else:
+            return self.retina_net.predict(inputs)

@@ -8,11 +8,10 @@ class BoxDecoder(nn.Module):
         self,
         mean: Tuple[float, float, float, float] = (0, 0, 0, 0),  # x1, y1, x2, y2 respectively
         std: Tuple[float, float, float, float] = (0.1, 0.1, 0.2, 0.2),  # x1, y1, x2, y2 respectively
-        device: str = 'cpu',
     ):
         super(BoxDecoder, self).__init__()
-        self.mean = torch.tensor(mean, dtype=torch.float32, device=device)
-        self.std = torch.tensor(std, dtype=torch.float32, device=device)
+        self.mean = torch.tensor(mean, dtype=torch.float32)
+        self.std = torch.tensor(std, dtype=torch.float32)
 
     def forward(self, anchors: torch.Tensor, regression: torch.Tensor) -> torch.Tensor:
         """decode_box_outputs adapted from https://github.com/google/automl/blob/master/efficientdet/anchors.py
@@ -30,6 +29,10 @@ class BoxDecoder(nn.Module):
             Returns:
                 bounding_boxes: [batch_size, num_boxes, 4] (x1, y1, x2, y2)
         """
+        # to device
+        self.mean.to(anchors.device)
+        self.std.to(anchors.device)
+
         xa = (anchors[:, :, 2] + anchors[:, :, 0]) / 2.
         ya = (anchors[:, :, 3] + anchors[:, :, 1]) / 2.
         wa = torch.clamp(anchors[:, :, 2] - anchors[:, :, 0], min=1.)

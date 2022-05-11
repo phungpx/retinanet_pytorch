@@ -5,9 +5,9 @@ from typing import List
 
 
 class DenseNet(nn.Module):
-    def __init__(self, backbone: str = 'densenet121', pretrained: bool = False):
+    def __init__(self, backbone_name: str = 'densenet121', pretrained: bool = False):
         super(DenseNet, self).__init__()
-        backbone = getattr(models, backbone)(pretrained)
+        backbone = getattr(models, backbone_name)(pretrained=pretrained)
         # layer1
         self.conv0 = backbone.features.conv0
         self.norm0 = backbone.features.norm0
@@ -71,6 +71,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', help='version of backbone', type=str, default='densenet121')
+    parser.add_argument('--pretrained', action='store_true')
     args = parser.parse_args()
 
     versions = ['densenet121', 'densenet161', 'densenet169', 'densenet201']
@@ -78,7 +79,7 @@ if __name__ == "__main__":
         print(f'{version} is invalid.')
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    backbone = DenseNet(backbone=args.version, pretrained=False).to(device)
+    backbone = DenseNet(backbone_name=args.version, pretrained=args.pretrained).to(device)
 
     dummy_input = torch.rand(size=[1, 3, 224, 224], dtype=torch.float32, device=device)
 

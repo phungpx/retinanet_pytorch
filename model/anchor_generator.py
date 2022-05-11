@@ -91,7 +91,7 @@ class AnchorGenerator(nn.Module):
 
 
 if __name__ == "__main__":
-    device = 'cuda' is torch.cuda.is_available() else 'cpu'
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     inputs = torch.FloatTensor(1, 3, 512, 512).to(device)
     features = (
         torch.FloatTensor(1, 256, 64, 64).to(device),  # P3

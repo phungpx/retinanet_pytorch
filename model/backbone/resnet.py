@@ -5,9 +5,9 @@ from typing import List
 
 
 class ResNet(nn.Module):
-    def __init__(self, backbone: str, pretrained: bool = False):
+    def __init__(self, backbone_name: str, pretrained: bool = False):
         super(ResNet, self).__init__()
-        backbone = getattr(models, backbone)(pretrained)
+        backbone = getattr(models, backbone_name)(pretrained=pretrained)
         # layer0
         self.conv1 = backbone.conv1
         self.bn1 = backbone.bn1
@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', help='version of backbone', type=str, default='resnet18')
+    parser.add_argument('--pretrained', action='store_true')
     args = parser.parse_args()
 
     versions = ['resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152']
@@ -70,7 +71,7 @@ if __name__ == "__main__":
         print(f'{version} is invalid.')
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    backbone = ResNet(backbone=args.version, pretrained=False).to(device)
+    backbone = ResNet(backbone_name=args.version, pretrained=args.pretrained).to(device)
 
     dummy_input = torch.rand(size=[1, 3, 224, 224], dtype=torch.float32, device=device)
 
