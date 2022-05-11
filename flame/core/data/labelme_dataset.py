@@ -8,7 +8,7 @@ import imgaug.augmenters as iaa
 from pathlib import Path
 from natsort import natsorted
 from torch.utils.data import Dataset
-from typing import Dict, Tuple, List, Optional
+from typing import Dict, Tuple, List, Optional, Union
 from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 
 
