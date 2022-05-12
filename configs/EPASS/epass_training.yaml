@@ -22,18 +22,18 @@ data:
             EPASS_TYPE_4: 0
             EPASS_TYPE_5: 0
           transforms:
-            - iaa.MotionBlur()
-            - iaa.ChangeColorTemperature()
-            - iaa.GaussianBlur(sigma=(0, 1))
-            - iaa.Grayscale(alpha=(0.0, 1.0))
-            - iaa.Add(value=(-50, 50), per_channel=True)
+            # - iaa.MotionBlur()
+            # - iaa.ChangeColorTemperature()
+            # - iaa.GaussianBlur(sigma=(0, 1))
+            # - iaa.Grayscale(alpha=(0.0, 1.0))
+            # - iaa.Add(value=(-50, 50), per_channel=True)
             - iaa.Fliplr(p=0.5)
             - iaa.Flipud(p=0.5)
             # - iaa.Crop(percent=(0, 0.1))
             # - iaa.Pad(percent=(0, 0.1), keep_size=False)
             # - iaa.Rot90(k=[0, 1, 2, 3], keep_size=False)
             # - iaa.Affine(rotate=(0, 360), shear=(-2, 2), fit_output=True)
-      batch_size: 1
+      batch_size: 2
       shuffle: True
       num_workers: 12
       pin_memory: True
@@ -62,7 +62,7 @@ data:
             EPASS_TYPE_3: 0
             EPASS_TYPE_4: 0
             EPASS_TYPE_5: 0
-      batch_size: 1
+      batch_size: 2
       shuffle: False
       num_workers: 12
       pin_memory: True
@@ -90,7 +90,7 @@ data:
             EPASS_TYPE_3: 0
             EPASS_TYPE_4: 0
             EPASS_TYPE_5: 0
-      batch_size: 1
+      batch_size: 2
       shuffle: False
       num_workers: 12
       pin_memory: True
@@ -103,7 +103,7 @@ loss:
   FocalLoss:
     alpha: 0.25
     gamma: 2.0
-    lamda: 50.0
+    lamda: 5.0
     device: '''cuda'''
 
 model:
@@ -122,6 +122,15 @@ optim:
   Adam:
     params: config['model'].parameters()
     lr: 0.00001
+
+# optim:
+#   module: torch.optim
+#   class: SGD
+#   SGD:
+#     params: config['model'].parameters()
+#     lr: 0.08
+#     momentum: 0.9
+#     nesterov: True
 
 train_evaluator:
   module: flame.handlers.metric_evaluator
@@ -152,7 +161,7 @@ metrics:
             FocalLoss:
               alpha: 0.25
               gamma: 2.0
-              lamda: 50.0
+              lamda: 5.0
               device: '''cuda'''
           output_transform: 'lambda x: (x[0], x[1], x[2], x[3])'
     attach_to:
@@ -189,7 +198,7 @@ lr_scheduler:
     score_name: '''focal_loss'''
     evaluator_name: '''valid_evaluator'''
     mode: '''min'''
-    patience: 3
+    patience: 10
     verbose: True
 
 early_stopping:
