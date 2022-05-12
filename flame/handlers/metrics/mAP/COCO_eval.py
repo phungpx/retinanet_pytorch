@@ -6,9 +6,9 @@ from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 
 
-class Evaluator(Metric):
+class COCOEvaluator(Metric):
     def __init__(self, compound_coef: int, annotation_file: str, save_path: str, output_transform=lambda x: x):
-        super(Evaluator, self).__init__(output_transform)
+        super(COCOEvaluator, self).__init__(output_transform)
         self.save_path = Path(save_path)
         self.imsize = compound_coef * 128 + 512
         self.groundtruth_coco = COCO(annotation_file=annotation_file)

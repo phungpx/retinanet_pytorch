@@ -1,10 +1,9 @@
 import torch
 from torch import nn
 from typing import List, Tuple, Dict
-from . import loss
 
 
-class FocalLoss(loss.LossBase):
+class FocalLoss(nn.Module):
     def __init__(
         self,
         alpha: float = 0.25,

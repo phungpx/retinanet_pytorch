@@ -1,13 +1,16 @@
 from typing import Callable
 from ignite.metrics import Metric
 
+import torch
+from typing import Dict, Tuple
+
 
 class Evaluator(Metric):
     def __init__(self, eval_fn: Callable, output_transform=lambda x: x):
         super(Evaluator, self).__init__(output_transform)
         self.eval_fn = eval_fn
 
-    def _get_bboxes(self, pred, target, image_path):
+    def _get_bboxes(self, pred: Dict[str, torch.Tensor], target: Dict[str, torch.Tensor], image_path: str) -> Tuple[list, list]:
         '''
         Args:
             pred: {

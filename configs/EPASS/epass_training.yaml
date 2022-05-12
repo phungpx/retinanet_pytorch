@@ -152,17 +152,10 @@ metrics:
   Metrics:
     metrics:
       focal_loss:
-        module: flame.handlers.metrics.focal_loss.loss
+        module: flame.handlers.metrics.loss
         class: Loss
         Loss:
-          loss_fn:
-            module: flame.handlers.metrics.focal_loss.focal_loss
-            class: FocalLoss
-            FocalLoss:
-              alpha: 0.25
-              gamma: 2.0
-              lamda: 5.0
-              device: '''cuda'''
+          loss_fn: config['loss']
           output_transform: 'lambda x: (x[0], x[1], x[2], x[3])'
     attach_to:
       train_evaluator: '''train'''
