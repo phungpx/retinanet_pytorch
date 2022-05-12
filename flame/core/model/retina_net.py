@@ -6,7 +6,7 @@ from typing import Tuple, List, Dict, Optional
 
 from .fpn import FPN
 from .backbone import load_backbone
-from .head import Regressor, Classifier
+from .head.head import Regressor, Classifier
 from .anchor_generator import AnchorGenerator
 from .box_transform.box_decoder import BoxDecoder
 from .box_transform.box_clipper import BoxClipper
@@ -56,13 +56,13 @@ class RetinaNet(nn.Module):
         # head
         self.regressor = Regressor(
             FPN_out_channels=FPN_out_channels,
-            mid_out_channels=FPN_out_channels,
+            # mid_out_channels=FPN_out_channels,
             num_anchors=len(scales) * len(aspect_ratios),
         )
 
         self.classifier = Classifier(
             FPN_out_channels=FPN_out_channels,
-            mid_out_channels=FPN_out_channels,
+            # mid_out_channels=FPN_out_channels,
             num_anchors=len(scales) * len(aspect_ratios),
             num_classes=num_classes,
         )
@@ -81,10 +81,10 @@ class RetinaNet(nn.Module):
                 module.bias.data.zero_()
 
         prior = 0.01
-        self.classifier.head_conv[0].weight.data.fill_(0)
-        self.classifier.head_conv[0].bias.data.fill_(-math.log((1.0 - prior) / prior))
-        self.regressor.head_conv.weight.data.fill_(0)
-        self.regressor.head_conv.bias.data.fill_(0)
+        self.classifier.header[0].weight.data.fill_(0)
+        self.classifier.header[0].bias.data.fill_(-math.log((1.0 - prior) / prior))
+        self.regressor.header.weight.data.fill_(0)
+        self.regressor.header.bias.data.fill_(0)
 
         self.freeze_batchnorm
 
@@ -194,10 +194,10 @@ class Model(nn.Module):
 
         if pretrained_weight is not None:
             state_dict = torch.load(pretrained_weight, map_location='cpu')
-            state_dict.pop('classifier.head_conv[0].weight')
-            state_dict.pop('classifier.head_conv[0].bias')
-            state_dict.pop('regressor.head_conv.weight')
-            state_dict.pop('regressor.head_conv.bias')
+            state_dict.pop('classifier.header[0].weight')
+            state_dict.pop('classifier.header[0].bias')
+            state_dict.pop('regressor.header.weight')
+            state_dict.pop('regressor.header.bias')
             self.retina_net.load_state_dict(state_dict, strict=False)
 
     def state_dict(self):

@@ -22,17 +22,17 @@ data:
             EPASS_TYPE_4: 0
             EPASS_TYPE_5: 0
           transforms:
-            # - iaa.MotionBlur()
-            # - iaa.ChangeColorTemperature()
-            # - iaa.GaussianBlur(sigma=(0, 1))
-            # - iaa.Grayscale(alpha=(0.0, 1.0))
-            # - iaa.Add(value=(-50, 50), per_channel=True)
+            - iaa.MotionBlur()
+            - iaa.ChangeColorTemperature()
+            - iaa.GaussianBlur(sigma=(0, 1))
+            - iaa.Grayscale(alpha=(0.0, 1.0))
+            - iaa.Add(value=(-50, 50), per_channel=True)
             - iaa.Fliplr(p=0.5)
             - iaa.Flipud(p=0.5)
-            # - iaa.Crop(percent=(0, 0.1))
-            # - iaa.Pad(percent=(0, 0.1), keep_size=False)
-            # - iaa.Rot90(k=[0, 1, 2, 3], keep_size=False)
-            # - iaa.Affine(rotate=(0, 360), shear=(-2, 2), fit_output=True)
+            - iaa.Crop(percent=(0, 0.1))
+            - iaa.Pad(percent=(0, 0.1), keep_size=False)
+            - iaa.Rot90(k=[0, 1, 2, 3], keep_size=False)
+            - iaa.Affine(rotate=(0, 360), shear=(-2, 2), fit_output=True)
       batch_size: 2
       shuffle: True
       num_workers: 12
@@ -103,7 +103,7 @@ loss:
   FocalLoss:
     alpha: 0.25
     gamma: 2.0
-    lamda: 5.0
+    lamda: 50.0
     device: '''cuda'''
 
 model:
@@ -207,7 +207,7 @@ best_saver:
   module: flame.handlers.checkpoint
   class: BestSaver
   BestSaver:
-    dirname: '''checkpoint/EPASS/resnet50/'''
+    dirname: '''checkpoint/EPASS/resnet50_new_head/'''
     score_name: '''focal_loss'''
     mode: '''min'''
     evaluator_name: '''valid_evaluator'''
@@ -225,7 +225,7 @@ backup_saver:
       - '''history'''
       - '''lr_scheduler'''
       - '''early_stopping'''
-    dirname: '''checkpoint/EPASS/resnet50/'''
+    dirname: '''checkpoint/EPASS/resnet50_new_head/'''
     save_interval: 1
     n_saved: 1
 
