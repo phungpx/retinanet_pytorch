@@ -207,7 +207,7 @@ best_saver:
   module: flame.handlers.checkpoint
   class: BestSaver
   BestSaver:
-    dirname: '''checkpoint/EPASS/resnet50_new_head/2205122246/best_model_154_focal_loss=-6.9270.pt'''
+    dirname: '''checkpoint/EPASS/resnet50_new_head/'''
     score_name: '''focal_loss'''
     mode: '''min'''
     evaluator_name: '''valid_evaluator'''
@@ -225,7 +225,7 @@ backup_saver:
       - '''history'''
       - '''lr_scheduler'''
       - '''early_stopping'''
-    dirname: '''checkpoint/EPASS/resnet50_new_head/2205122246/best_model_154_focal_loss=-6.9270'''
+    dirname: '''checkpoint/EPASS/resnet50_new_head/'''
     save_interval: 1
     n_saved: 1
 

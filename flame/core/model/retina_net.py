@@ -4,7 +4,7 @@ from torch import nn
 from torchvision.ops.boxes import batched_nms
 from typing import Tuple, List, Dict, Optional
 
-from .neck.fpn import FPN
+from .fpn import FPN
 from .backbone import load_backbone
 # from .head.head import Regressor, Classifier
 from .head.efficient_head import Regressor, Classifier
