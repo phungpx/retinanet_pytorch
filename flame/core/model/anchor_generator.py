@@ -92,17 +92,17 @@ class AnchorGenerator(nn.Module):
 
 if __name__ == "__main__":
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    inputs = torch.FloatTensor(1, 3, 512, 512).to(device)
+    inputs = torch.rand(size=[1, 3, 512, 512], dtype=torch.float32, device=device)
     features = (
-        torch.FloatTensor(1, 256, 64, 64).to(device),  # P3
-        torch.FloatTensor(1, 256, 32, 32).to(device),  # P4
-        torch.FloatTensor(1, 256, 16, 16).to(device),  # P5
-        torch.FloatTensor(1, 256, 8, 8).to(device),  # P6
-        torch.FloatTensor(1, 256, 4, 4).to(device),  # P7
+        torch.rand(size=[1, 256, 64, 64], dtype=torch.float32, device=device),  # P3
+        torch.rand(size=[1, 256, 32, 32], dtype=torch.float32, device=device),  # P4
+        torch.rand(size=[1, 256, 16, 16], dtype=torch.float32, device=device),  # P5
+        torch.rand(size=[1, 256, 8, 8], dtype=torch.float32, device=device),  # P6
+        torch.rand(size=[1, 256, 4, 4], dtype=torch.float32, device=device),  # P7
     )
 
     anchor_generator = AnchorGenerator()
 
     anchors = anchor_generator(inputs=inputs, features=features)
 
-    print(anchors.shape)
+    print(anchors.shape)  # torch.Size([1, 49104, 4])

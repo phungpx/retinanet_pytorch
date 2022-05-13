@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from typing import List
-from .basic_blocks import ConvBNReLU
+from .basic_blocks import Swish, SeparableConvBNSwish
 
 
 __all__ = ['Regressor', 'Classifier']
@@ -18,7 +18,7 @@ class Regressor(nn.Module):
         super(Regressor, self).__init__()
         self.conv_layers = nn.ModuleList(
             [
-                ConvBNReLU(
+                SeparableConvBNSwish(
                     in_channels=FPN_out_channels,
                     out_channels=FPN_out_channels,
                     kernel_size=3,
@@ -41,11 +41,13 @@ class Regressor(nn.Module):
             ]
         )
 
-        self.act = nn.ReLU()
-        self.header = nn.Conv2d(
+        self.act = Swish()
+        self.header = SeparableConvBNSwish(
             in_channels=FPN_out_channels,
             out_channels=num_anchors * 4,
-            kernel_size=3, stride=1, padding=1
+            kernel_size=3,
+            use_batch_norm=False,
+            use_activation=False,
         )
 
     def forward(self, pyramid_features: List[torch.Tensor]) -> torch.Tensor:
@@ -95,7 +97,7 @@ class Classifier(nn.Module):
 
         self.conv_layers = nn.ModuleList(
             [
-                ConvBNReLU(
+                SeparableConvBNSwish(
                     in_channels=FPN_out_channels,
                     out_channels=FPN_out_channels,
                     kernel_size=3,
@@ -118,12 +120,14 @@ class Classifier(nn.Module):
             ]
         )
 
-        self.act = nn.ReLU()
+        self.act = Swish()
 
-        self.header = nn.Conv2d(
+        self.header = SeparableConvBNSwish(
             in_channels=FPN_out_channels,
             out_channels=num_anchors * num_classes,
-            kernel_size=3, stride=1, padding=1
+            kernel_size=3,
+            use_batch_norm=False,
+            use_activation=False,
         )
 
     def forward(self, pyramid_features: List[torch.Tensor]) -> torch.Tensor:

@@ -7,8 +7,10 @@ data:
         module: flame.core.data.labelme_dataset
         class: LabelmeDataset
         LabelmeDataset:
-          imsize: 640
+          imsize: 768
           dirnames:
+            - '''/extdata/ocr/phungpx/projects/PHUNGPX/object_detection_pytorch/efficient_det_pytorch/dataset/EPASS/train'''
+            - '''/extdata/ocr/phungpx/projects/PHUNGPX/object_detection_pytorch/efficient_det_pytorch/dataset/EPASS/valid'''
             - '''/extdata/ocr/phungpx/projects/PHUNGPX/object_detection_pytorch/efficient_det_pytorch/dataset/EPASS/test'''
           image_patterns: ['''*.jpg''', '''*.png''', '''*.jpeg''', '''*.JPG''', '''*.PNG''', '''*.JPEG''']
           label_patterns: ['''*.json''']
@@ -20,7 +22,7 @@ data:
             EPASS_TYPE_3: 0
             EPASS_TYPE_4: 0
             EPASS_TYPE_5: 0
-      batch_size: 2
+      batch_size: 4
       shuffle: False
       num_workers: 12
       pin_memory: True
@@ -72,7 +74,7 @@ checkpoint_loader:
   module: flame.handlers.checkpoint
   class: CheckpointLoader
   CheckpointLoader:
-    checkpoint_path: '''checkpoint/EPASS/resnet50_new_head/2205121503/best_model_28_focal_loss=-35.4517.pt'''
+    checkpoint_path: '''checkpoint/EPASS/resnet50_new_head/2205122246/best_model_154_focal_loss=-6.9270.pt'''
     mode: '''test'''
 
 predictor:
@@ -80,8 +82,8 @@ predictor:
   class: RegionPredictor
   RegionPredictor:
     evaluator_name: '''engine'''
-    output_dir: '''checkpoint/EPASS/resnet50_new_head/2205121503/best_model_28_focal_loss=-35.4517'''
-    imsize: 640
+    output_dir: '''checkpoint/EPASS/resnet50_new_head/2205122246/best_model_154_focal_loss=-6.9270'''
+    imsize: 768
     classes:
       EPASS: [[0, 0, 255], 0]
     output_transform: 'lambda x: (x[0], x[-1])'

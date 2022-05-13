@@ -4,9 +4,10 @@ from torch import nn
 from torchvision.ops.boxes import batched_nms
 from typing import Tuple, List, Dict, Optional
 
-from .fpn import FPN
+from .neck.fpn import FPN
 from .backbone import load_backbone
-from .head.head import Regressor, Classifier
+# from .head.head import Regressor, Classifier
+from .head.efficient_head import Regressor, Classifier
 from .anchor_generator import AnchorGenerator
 from .box_transform.box_decoder import BoxDecoder
 from .box_transform.box_clipper import BoxClipper
@@ -80,11 +81,11 @@ class RetinaNet(nn.Module):
                 module.weight.data.fill_(1)
                 module.bias.data.zero_()
 
-        prior = 0.01
-        self.classifier.header[0].weight.data.fill_(0)
-        self.classifier.header[0].bias.data.fill_(-math.log((1.0 - prior) / prior))
-        self.regressor.header.weight.data.fill_(0)
-        self.regressor.header.bias.data.fill_(0)
+        # prior = 0.01
+        # self.classifier.header.weight.data.fill_(0)
+        # self.classifier.header.bias.data.fill_(-math.log((1.0 - prior) / prior))
+        # self.regressor.header.weight.data.fill_(0)
+        # self.regressor.header.bias.data.fill_(0)
 
         self.freeze_batchnorm
 
@@ -194,8 +195,8 @@ class Model(nn.Module):
 
         if pretrained_weight is not None:
             state_dict = torch.load(pretrained_weight, map_location='cpu')
-            state_dict.pop('classifier.header[0].weight')
-            state_dict.pop('classifier.header[0].bias')
+            state_dict.pop('classifier.header.weight')
+            state_dict.pop('classifier.header.bias')
             state_dict.pop('regressor.header.weight')
             state_dict.pop('regressor.header.bias')
             self.retina_net.load_state_dict(state_dict, strict=False)
@@ -212,3 +213,27 @@ class Model(nn.Module):
 
     def predict(self, inputs):
         return self.retina_net.predict(inputs)
+
+
+if __name__ == "__main__":
+    import time
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    retina_net = Model(
+        pretrained_weight=None,
+        num_classes=1,
+        backbone_name='resnet18',
+        backbone_pretrained=False,
+    ).to(device)
+
+    retina_net.train()
+
+    dummy_input = torch.rand(size=[1, 3, 224, 224], dtype=torch.float32, device=device)
+
+    t1 = time.time()
+    outputs = retina_net(dummy_input)
+    t2 = time.time()
+
+    print(f"Input Shape: {dummy_input.shape}")
+    print(f"Number of parameters: {sum((p.numel() for p in retina_net.parameters() if p.requires_grad))}")
+    print(f"Processing Time: {t2 - t1}s")
+    # print(f"output: {outputs}")

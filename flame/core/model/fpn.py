@@ -85,9 +85,9 @@ class FPN(nn.Module):
         '''
         C3, C4, C5 = features
 
-        assert C3.shape[1] == self.C3_out_channels, 'Setting value is wrong.'
-        assert C4.shape[1] == self.C4_out_channels, 'Setting value is wrong.'
-        assert C5.shape[1] == self.C5_out_channels, 'Setting value is wrong.'
+        assert C3.shape[1] == self.C3_out_channels, 'out_channels is not compatible.'
+        assert C4.shape[1] == self.C4_out_channels, 'out_channels is not compatible.'
+        assert C5.shape[1] == self.C5_out_channels, 'out_channels is not compatible.'
 
         M5 = self.C5_conv1x1(C5)
         P5 = self.M5_conv3x3(M5)
@@ -110,16 +110,19 @@ class FPN(nn.Module):
 if __name__ == "__main__":
     import time
     import torch
-    from resnet import ResNet
+    from backbone import load_backbone
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    backbone = ResNet(backbone='resnet50', pretrained=False).to(device)
+    backbone, out_channels = load_backbone(backbone_name='resnet34', pretrained=False)
     fpn = FPN(
-        C3_out_channels=512,
-        C4_out_channels=1024,
-        C5_out_channels=2048,
+        C3_out_channels=out_channels['C3'],
+        C4_out_channels=out_channels['C4'],
+        C5_out_channels=out_channels['C5'],
         FPN_out_channels=256,
     )
+
+    backbone = backbone.to(device)
+    fpn = fpn.to(device)
 
     dummy_input = torch.rand(size=[1, 3, 224, 224], dtype=torch.float32, device=device)
 
