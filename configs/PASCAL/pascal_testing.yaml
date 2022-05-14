@@ -18,7 +18,7 @@ data:
           label_extent: '''.xml'''
           mean: [0.485, 0.456, 0.406]
           std: [0.229, 0.224, 0.225]
-          imsize: 768
+          imsize: 896
           classes:
             aeroplane: 0
             bicycle: 1
@@ -40,7 +40,7 @@ data:
             sofa: 17
             train: 18
             tvmonitor: 19
-      batch_size: 32
+      batch_size: 4
       shuffle: False
       pin_memory: True
       num_workers: 12
@@ -65,11 +65,11 @@ metrics:
   Metrics:
     metrics:
       mAP:
-        module: flame.handlers.metrics.eval
+        module: flame.handlers.metrics.evaluator
         class: Evaluator
         Evaluator:
           eval_fn:
-            module: flame.handlers.metrics.mAP.mAP
+            module: flame.core.metric.mAP
             class: MeanAveragePrecision
             MeanAveragePrecision:
               classes:
@@ -111,7 +111,7 @@ checkpoint_loader:
   module: flame.handlers.checkpoint
   class: CheckpointLoader
   CheckpointLoader:
-    checkpoint_path: '''checkpoint/PASCAL/resnet50'''
+    checkpoint_path: '''checkpoint/PASCAL/resnet50/2205132245/best_model_41_focal_loss=-28.5675.pt'''
     mode: '''test'''
 
 predictor:
@@ -119,8 +119,8 @@ predictor:
   class: RegionPredictor
   RegionPredictor:
     evaluator_name: '''engine'''
-    output_dir: '''checkpoint/PASCAL/resnet50'''
-    compound_coef: 0
+    output_dir: '''checkpoint/PASCAL/resnet50/2205132245/best_model_41_focal_loss=-28.5675'''
+    imsize: 896
     classes:
       aeroplane: [[128, 0, 0], 0]  # color, class_idx, area_threshold
       bicycle: [[0, 128, 0], 1]
@@ -145,7 +145,7 @@ predictor:
     output_transform: 'lambda x: (x[0], x[-1])'
 
 engine:
-  module: flame.core.engine.tester
+  module: flame.core.engine.evaluator
   class: Evaluator
   Evaluator:
     dataset: config['data']['test']

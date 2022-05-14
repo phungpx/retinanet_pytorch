@@ -81,12 +81,14 @@ class RetinaNet(nn.Module):
                 module.weight.data.fill_(1)
                 module.bias.data.zero_()
 
-        # prior = 0.01
-        # self.classifier.header.weight.data.fill_(0)
-        # self.classifier.header.bias.data.fill_(-math.log((1.0 - prior) / prior))
-        # self.regressor.header.weight.data.fill_(0)
-        # self.regressor.header.bias.data.fill_(0)
+        # initialize head
+        prior = 0.01
+        self.classifier.header.pointwise_conv.conv2d.weight.data.fill_(0)
+        self.classifier.header.pointwise_conv.conv2d.bias.data.fill_(-math.log((1.0 - prior) / prior))
+        self.regressor.header.pointwise_conv.conv2d.weight.data.fill_(0)
+        self.regressor.header.pointwise_conv.conv2d.bias.data.fill_(0)
 
+        # freeze all batchnorm
         self.freeze_batchnorm
 
     @property
@@ -194,11 +196,12 @@ class Model(nn.Module):
         )
 
         if pretrained_weight is not None:
+            print('__[Loading Pretrained Weight]__')
             state_dict = torch.load(pretrained_weight, map_location='cpu')
-            state_dict.pop('classifier.header.weight')
-            state_dict.pop('classifier.header.bias')
-            state_dict.pop('regressor.header.weight')
-            state_dict.pop('regressor.header.bias')
+            state_dict.pop('classifier.header.pointwise_conv.conv2d.weight')
+            state_dict.pop('classifier.header.pointwise_conv.conv2d.bias')
+            state_dict.pop('regressor.header.pointwise_conv.conv2d.weight')
+            state_dict.pop('regressor.header.pointwise_conv.conv2d.bias')
             self.retina_net.load_state_dict(state_dict, strict=False)
 
     def state_dict(self):
