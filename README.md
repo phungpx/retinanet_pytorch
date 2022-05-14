@@ -6,20 +6,20 @@
 
 # 2. Project Structure
 * [Backbone using all variants of DenseNet and ResNet](https://github.com/phungpx/retinanet_pytorch/tree/main/flame/core/model/backbone)
-```
+```python3
 # investigate backbone (input shape and output shape), I will update more backbone for experiments (next step: efficient net B0-B7)
 cd flame/core/model/backbone
 python resnet.py --version <resnet18 -> resnet110> --pretrained <if use pretrained weight>
 python densenet.py --version <densenet121 -> densenet201> --pretrained <if use pretrained weight>
 ```
 * [FPN](https://github.com/phungpx/retinanet_pytorch/blob/main/flame/core/model/fpn.py)
-```bash
+```python3
 # investigate fpn (input shape and output shape)
 cd flame/core/model/
 python fpn.py
 ```
 * [Regression and Classification Head](https://github.com/phungpx/retinanet_pytorch/tree/main/flame/core/model/head)
-```bash
+```python3
 # investigate head (input shape and output shape)
 cd flame/core/model/head
 python efficient_head.py
@@ -28,10 +28,10 @@ python head.py
 * [Retina Net](https://github.com/phungpx/retinanet_pytorch/tree/main/flame/core/model)
 * [Focal Loss](https://github.com/phungpx/retinanet_pytorch/blob/main/flame/core/loss/focal_loss.py)
 * [Anchor Generation](https://github.com/phungpx/retinanet_pytorch/blob/main/flame/core/model/anchor_generator.py)
-```bash
-cd flame/core/model/head
-python efficient_head.py
-python head.py
+```python3
+# investigate anchor generator (input shape and output shape)
+cd flame/core/model/
+python anchor_generator.py
 ```
 * [mAP for evaluating model](https://github.com/phungpx/retinanet_pytorch/tree/main/flame/core/metric/)
 * [Visualization for predicting results](https://github.com/phungpx/retinanet_pytorch/blob/main/flame/handlers/region_predictor.py)
