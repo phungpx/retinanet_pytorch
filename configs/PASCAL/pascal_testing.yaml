@@ -111,7 +111,7 @@ checkpoint_loader:
   module: flame.handlers.checkpoint
   class: CheckpointLoader
   CheckpointLoader:
-    checkpoint_path: '''checkpoint/PASCAL/resnet50/2205132245/best_model_41_focal_loss=-28.5675.pt'''
+    checkpoint_path: '''checkpoint/PASCAL/resnet50/2205140844/best_model_159_focal_loss=-26.5384.pt'''
     mode: '''test'''
 
 predictor:
@@ -119,7 +119,7 @@ predictor:
   class: RegionPredictor
   RegionPredictor:
     evaluator_name: '''engine'''
-    output_dir: '''checkpoint/PASCAL/resnet50/2205132245/best_model_41_focal_loss=-28.5675'''
+    output_dir: '''checkpoint/PASCAL/resnet50/2205140844/best_model_159_focal_loss=-26.5384'''
     imsize: 896
     classes:
       aeroplane: [[128, 0, 0], 0]  # color, class_idx, area_threshold

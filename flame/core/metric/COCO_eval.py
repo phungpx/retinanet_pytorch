@@ -7,10 +7,10 @@ from pycocotools.cocoeval import COCOeval
 
 
 class COCOEvaluator(Metric):
-    def __init__(self, compound_coef: int, annotation_file: str, save_path: str, output_transform=lambda x: x):
+    def __init__(self, imsize: int, annotation_file: str, save_path: str, output_transform=lambda x: x):
         super(COCOEvaluator, self).__init__(output_transform)
         self.save_path = Path(save_path)
-        self.imsize = compound_coef * 128 + 512
+        self.imsize = imsize
         self.groundtruth_coco = COCO(annotation_file=annotation_file)
 
     def reset(self):

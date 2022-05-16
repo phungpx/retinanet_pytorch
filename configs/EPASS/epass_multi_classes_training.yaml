@@ -18,8 +18,8 @@ data:
             EPASS_TYPE_1: 0
             EPASS_TYPE_2: 1
             EPASS_TYPE_3: 2
-            EPASS_TYPE_4: 3
-            EPASS_TYPE_5: 4
+            EPASS_TYPE_4: 2
+            EPASS_TYPE_5: 3
           transforms:
             - iaa.MotionBlur()
             - iaa.ChangeColorTemperature()
@@ -58,8 +58,8 @@ data:
             EPASS_TYPE_1: 0
             EPASS_TYPE_2: 1
             EPASS_TYPE_3: 2
-            EPASS_TYPE_4: 3
-            EPASS_TYPE_5: 4
+            EPASS_TYPE_4: 2
+            EPASS_TYPE_5: 3
       batch_size: 16
       shuffle: False
       num_workers: 12
@@ -86,8 +86,8 @@ data:
             EPASS_TYPE_1: 0
             EPASS_TYPE_2: 1
             EPASS_TYPE_3: 2
-            EPASS_TYPE_4: 3
-            EPASS_TYPE_5: 4
+            EPASS_TYPE_4: 2
+            EPASS_TYPE_5: 3
       batch_size: 16
       shuffle: False
       num_workers: 12
@@ -108,8 +108,8 @@ model:
   module: flame.core.model.retina_net
   class: Model
   Model:
-    pretrained_weight: '''checkpoint/EPASS/resnet50_new_head/2205131248/best_model_185_focal_loss=-6.6623.pt'''
-    num_classes: 5
+    pretrained_weight: '''checkpoint/EPASS/resnet50_5_classes/2205140823/best_model_105_focal_loss=-5.1645.pt'''
+    num_classes: 4
     backbone_name: '''resnet50'''
     backbone_pretrained: False
     scales: ['2 ** 0', '2 ** (1 / 3)', '2 ** (2 / 3)']
@@ -206,7 +206,7 @@ best_saver:
   module: flame.handlers.checkpoint
   class: BestSaver
   BestSaver:
-    dirname: '''checkpoint/EPASS/resnet50_5_classes/'''
+    dirname: '''checkpoint/EPASS/resnet50_4_classes/'''
     score_name: '''focal_loss'''
     mode: '''min'''
     evaluator_name: '''valid_evaluator'''
@@ -224,7 +224,7 @@ backup_saver:
       - '''history'''
       - '''lr_scheduler'''
       - '''early_stopping'''
-    dirname: '''checkpoint/EPASS/resnet50_5_classes/'''
+    dirname: '''checkpoint/EPASS/resnet50_4_classes/'''
     save_interval: 1
     n_saved: 1
 
