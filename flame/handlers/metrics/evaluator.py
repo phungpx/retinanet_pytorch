@@ -69,6 +69,5 @@ class Evaluator(Metric):
             self.ground_truths.extend(_ground_truths)
 
     def compute(self):
-        print(len(self.ground_truths))
         metric = self.eval_fn(self.detections, self.ground_truths)
         return metric

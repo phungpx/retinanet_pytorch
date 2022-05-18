@@ -12,7 +12,7 @@ data:
           label_path: '''/extdata/ocr/phungpx/projects/PHUNGPX/object_detection_pytorch/efficient_det_pytorch/dataset/birdview_vehicles/annotations/instances_val.json'''
           mean: [0.485, 0.456, 0.406]
           std: [0.229, 0.224, 0.225]
-      batch_size: 16
+      batch_size: 1
       shuffle: False
       drop_last: False
       pin_memory: True
@@ -56,8 +56,10 @@ metrics:
         class: COCOEvaluator
         COCOEvaluator:
           imsize: 768
-          annotation_file: '''/extdata/ocr/phungpx/projects/PHUNGPX/object_detection_pytorch/efficient_det_pytorch/dataset/birdview_vehicles/annotations/instances_val.json'''
-          save_path: '''checkpoint/birdview_vehicles/retinanet_resnet50_fpn/2205161330/birdview_vehicles_val.json'''
+          # annotation_file: '''/extdata/ocr/phungpx/projects/PHUNGPX/object_detection_pytorch/efficient_det_pytorch/dataset/birdview_vehicles/annotations/instances_val.json'''
+          detection_path: '''checkpoint/birdview_vehicles/retinanet_resnet50_fpn/2205161330/birdview_vehicles_det_val.json'''
+          ground_truth_path: '''checkpoint/birdview_vehicles/retinanet_resnet50_fpn/2205161330/birdview_vehicles_gt_val.json'''
+          classes: 2
           output_transform: 'lambda x: (x[0], x[1], x[2])'
     attach_to:
       engine: '''test'''
